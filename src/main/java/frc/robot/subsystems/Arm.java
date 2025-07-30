@@ -31,8 +31,9 @@ public class Arm extends SubsystemBase {
     public double desiredPosition = 0;
     private final MotionMagicVoltage request = new MotionMagicVoltage(0).withSlot(0);
     public static GenericEntry motorVelocity = Shuffleboard.getTab("Arm").add("velocity", 0.0).getEntry();
-  public static GenericEntry motorPosition = Shuffleboard.getTab("Arm").add("Position", 0.0).getEntry();
-
+    public static GenericEntry motorPosition = Shuffleboard.getTab("Arm").add("Position", 0.0).getEntry();
+    public static GenericEntry motorVoltage = Shuffleboard.getTab("Arm").add("Voltage", 0.0).getEntry();
+    public static GenericEntry setPos = Shuffleboard.getTab("Arm").add("Target", 0.0).getEntry();
     
 
     private final TalonFX m_talon = new TalonFX(4, "rio");
@@ -43,17 +44,17 @@ public class Arm extends SubsystemBase {
 
         var slot0Configs = talonFXConfigs.Slot0;
         slot0Configs.kS = 0;
-        slot0Configs.kG = 0.3;
+        slot0Configs.kG = 0;
 
-        slot0Configs.kV = 0.16;
+        slot0Configs.kV = 0.11;
         slot0Configs.kA = 0.005;
 
-        slot0Configs.kP = 0.867;
-        slot0Configs.kI = 0;
+        slot0Configs.kP = 2.2;
+        slot0Configs.kI = 0.4;
         slot0Configs.kD = 0.32;
 
         var motionMagicConfigs = talonFXConfigs.MotionMagic;
-        motionMagicConfigs.MotionMagicCruiseVelocity = 16;
+        motionMagicConfigs.MotionMagicCruiseVelocity = 13.6;
         // vel/acc = time to reach constant velocity
         motionMagicConfigs.MotionMagicAcceleration = 267;
         // acc/jerk = time to reach constant acceleration
@@ -70,7 +71,8 @@ public class Arm extends SubsystemBase {
 
         motorOutputConfigs.NeutralMode = NeutralModeValue.Brake;
         m_talon.getConfigurator().apply(talonFXConfigs);
-
+        m_talon.setPosition(0);
+        
     }
 
     @Override
@@ -82,19 +84,21 @@ public class Arm extends SubsystemBase {
                 desiredPosition = 0;
                 break;
             case StateIdle:
-                System.out.println("StateIdle");
-                desiredPosition = 0.67;
-                if(getError() < 0.4)
+                if(desiredPosition < 0.02){
                     requestedState = ArmStates.StateZero;
-                break;
+                    break;    
+                }       
+                System.out.println("StateIdle");
+                desiredPosition -= 0.01;
+                break;    
             case StateMax:
                 System.out.println("StateMax");
-                desiredPosition = 1.0;
+                desiredPosition = 0.769;
                 // m_talon.setVoltage(0.2);
                 break;
-            default:
+            /*default:
                 desiredPosition = 0.2;
-                break;
+                break;*/
         }
         //System.out.println("ts is working!!!");
         runControlLoop();
@@ -113,6 +117,9 @@ public class Arm extends SubsystemBase {
         //System.out.println("ts is working!");
         motorVelocity.setDouble(m_talon.getVelocity().getValueAsDouble());
      
+        setPos.setDouble(desiredPosition);
+
+        motorVoltage.setDouble(m_talon.getMotorVoltage().getValueAsDouble());
 
         motorPosition.setDouble(m_talon.getPosition().getValueAsDouble());
       }
