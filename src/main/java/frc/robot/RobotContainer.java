@@ -11,6 +11,7 @@ import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Turntable;
 import frc.robot.subsystems.Turntable.TurntableStates;
 import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.CameraTurretFollow;
 import frc.robot.subsystems.Arm.ArmStates;
 
 import java.util.function.DoubleSupplier;
@@ -39,7 +40,7 @@ public class RobotContainer {
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
   private final Turntable m_Turntable = new Turntable(() -> m_driverController.getLeftX());
   private final Arm m_Arm = new Arm();
-  
+  private final CameraTurretFollow m_CameraTurretFollow = new CameraTurretFollow();
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings

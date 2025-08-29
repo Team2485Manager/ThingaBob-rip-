@@ -79,7 +79,7 @@ public class Arm extends SubsystemBase {
     public void periodic(){
         switch(requestedState){
             case StateZero:
-                System.out.println("StateZero");
+                //System.out.println("StateZero");
                 //m_talon.set(1)
                 desiredPosition = 0;
                 break;
@@ -88,11 +88,11 @@ public class Arm extends SubsystemBase {
                     requestedState = ArmStates.StateZero;
                     break;    
                 }       
-                System.out.println("StateIdle");
+                //System.out.println("StateIdle");
                 desiredPosition -= 0.01;
                 break;    
             case StateMax:
-                System.out.println("StateMax");
+                //System.out.println("StateMax");
                 desiredPosition = 0.769;
                 // m_talon.setVoltage(0.2);
                 break;
